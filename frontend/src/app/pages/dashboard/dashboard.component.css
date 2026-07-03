@@ -1,0 +1,9 @@
+.stat-card {
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}

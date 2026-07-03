@@ -1,0 +1,22 @@
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1050;
+}
+
+.notification-item {
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.notification-item.unread {
+  background-color: #e7f1ff;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}

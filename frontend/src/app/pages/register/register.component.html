@@ -1,0 +1,66 @@
+<div class="auth-wrapper d-flex align-items-center justify-content-center min-vh-100 py-4">
+  <div class="card shadow auth-card">
+    <div class="card-body p-4">
+      <h3 class="text-center mb-4">Create Account</h3>
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">{{ successMessage }}</div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" formControlName="fullName" />
+          @if (registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid) {
+            <div class="text-danger small">Full name is required.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" formControlName="email" />
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+            <div class="text-danger small">Valid email is required.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" formControlName="password" />
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('weakPassword')) {
+            <div class="text-danger small">
+              Password must be at least 8 characters with uppercase, lowercase, and number.
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" formControlName="confirmPassword" />
+          @if (registerForm.touched && registerForm.hasError('passwordMismatch')) {
+            <div class="text-danger small">Passwords do not match.</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select class="form-select" formControlName="role">
+            <option value="employee">Employee</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+          {{ loading ? 'Registering...' : 'Register' }}
+        </button>
+      </form>
+
+      <p class="text-center mt-3 mb-0">
+        Already have an account? <a routerLink="/login">Login</a>
+      </p>
+    </div>
+  </div>
+</div>

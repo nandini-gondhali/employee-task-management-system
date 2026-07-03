@@ -1,0 +1,114 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Employee Management</h2>
+  <button class="btn btn-primary" (click)="openAddForm()">
+    <i class="bi bi-plus-lg"></i> Add Employee
+  </button>
+</div>
+
+@if (errorMessage) {
+  <div class="alert alert-danger">{{ errorMessage }}</div>
+}
+@if (successMessage) {
+  <div class="alert alert-success">{{ successMessage }}</div>
+}
+
+@if (showForm) {
+  <div class="card mb-4">
+    <div class="card-header">{{ editingId ? 'Edit Employee' : 'Add Employee' }}</div>
+    <div class="card-body">
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" formControlName="name" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Department</label>
+            <input type="text" class="form-control" formControlName="department" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Designation</label>
+            <input type="text" class="form-control" formControlName="designation" />
+          </div>
+        </div>
+        <div class="mt-3">
+          <button type="submit" class="btn btn-success me-2">Save</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<div class="card">
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search employees..."
+          [(ngModel)]="search"
+          (keyup.enter)="onSearch()"
+        />
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-primary" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+      <!-- <p>Total Employees: {{ employees.length }}</p>
+  <pre>{{ employees | json }}</pre> -->
+
+    @if (loading) {
+      <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="onSort('name')">Name</th>
+              <th class="sortable" (click)="onSort('email')">Email</th>
+              <th class="sortable" (click)="onSort('department')">Department</th>
+              <th class="sortable" (click)="onSort('designation')">Designation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of employees; track emp.id) {
+              <tr>
+                <td>{{ emp.name }}</td>
+                <td>{{ emp.email }}</td>
+                <td>{{ emp.department }}</td>
+                <td>{{ emp.designation }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditForm(emp)">Edit</button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteEmployee(emp.id)">Delete</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="text-center text-muted">No employees found.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="page === 1">
+            <button class="page-link" (click)="changePage(page - 1)">Previous</button>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">{{ page }} / {{ totalPages }}</span>
+          </li>
+          <li class="page-item" [class.disabled]="page === totalPages">
+            <button class="page-link" (click)="changePage(page + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    }
+  </div>
+</div>

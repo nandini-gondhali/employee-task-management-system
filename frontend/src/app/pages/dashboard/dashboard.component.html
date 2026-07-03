@@ -1,0 +1,81 @@
+<h2 class="mb-4">Dashboard</h2>
+
+@if (loading) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (errorMessage) {
+  <div class="alert alert-danger">{{ errorMessage }}</div>
+} @else if (data) {
+  @if (isAdmin) {
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-primary text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Total Employees</h6>
+            <h2 class="card-title mb-0">{{ data.totalEmployees }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-info text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Total Tasks</h6>
+            <h2 class="card-title mb-0">{{ data.totalTasks }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-success text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Completed Tasks</h6>
+            <h2 class="card-title mb-0">{{ data.completedTasks }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-warning text-dark">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Pending Tasks</h6>
+            <h2 class="card-title mb-0">{{ data.pendingTasks }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="row g-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-primary text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">My Tasks</h6>
+            <h2 class="card-title mb-0">{{ data.myTasks }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-success text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Completed</h6>
+            <h2 class="card-title mb-0">{{ data.completedTasks }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-warning text-dark">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Pending</h6>
+            <h2 class="card-title mb-0">{{ data.pendingTasks }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card stat-card bg-danger text-white">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2">Overdue</h6>
+            <h2 class="card-title mb-0">{{ data.overdueTasks }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+}
