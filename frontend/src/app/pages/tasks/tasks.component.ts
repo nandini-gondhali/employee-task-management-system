@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
@@ -28,6 +28,7 @@ export class TasksComponent implements OnInit {
   private taskService = inject(TaskService);
   private employeeService = inject(EmployeeService);
   private auth = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   tasks: Task[] = [];
   employees: Employee[] = [];
@@ -65,19 +66,31 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  loadTasks(): void {
-    this.loading = true;
-    this.taskService.getTasks().subscribe({
-      next: (res) => {
-        this.tasks = res.data || [];
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Failed to load tasks.';
-        this.loading = false;
-      }
-    });
-  }
+loadTasks(): void {
+  this.loading = true;
+  this.errorMessage = '';
+
+  this.taskService.getTasks().subscribe({
+    next: (res: any) => {
+      console.log('Tasks API response:', res);
+
+      this.tasks = Array.isArray(res?.data) ? [...res.data] : [];
+
+      console.log('Assigned tasks:', this.tasks);
+
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Tasks load error:', err);
+
+      this.errorMessage = err.error?.message || 'Failed to load tasks.';
+      this.tasks = [];
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   loadEmployees(): void {
     this.employeeService.getEmployees({ page: 1, limit: 100 }).subscribe({

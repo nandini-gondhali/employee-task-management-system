@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.get('/api/health', (req, res) => {
+app.get('/api/testing', (req, res) => {
   res.json({ success: true, message: 'Employee Task Management API is running.' });
 });
 

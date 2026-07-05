@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReportService } from '../../services/report.service';
 
@@ -11,6 +11,7 @@ import { ReportService } from '../../services/report.service';
 })
 export class ReportsComponent implements OnInit {
   private reportService = inject(ReportService);
+  private cdr = inject(ChangeDetectorRef);
 
   activeTab: 'completed' | 'pending' | 'employee-wise' = 'completed';
   completedData: Record<string, unknown>[] = [];
@@ -28,29 +29,46 @@ export class ReportsComponent implements OnInit {
     this.loadReport(tab);
   }
 
-  loadReport(tab: 'completed' | 'pending' | 'employee-wise'): void {
-    this.loading = true;
-    this.errorMessage = '';
+loadReport(tab: 'completed' | 'pending' | 'employee-wise'): void {
+  this.loading = true;
+  this.errorMessage = '';
 
-    const handlers = {
-      completed: () => this.reportService.getCompletedReport(),
-      pending: () => this.reportService.getPendingReport(),
-      'employee-wise': () => this.reportService.getEmployeeWiseReport()
-    };
+  const handlers = {
+    completed: () => this.reportService.getCompletedReport(),
+    pending: () => this.reportService.getPendingReport(),
+    'employee-wise': () => this.reportService.getEmployeeWiseReport()
+  };
 
-    handlers[tab]().subscribe({
-      next: (res) => {
-        if (tab === 'completed') this.completedData = res.data || [];
-        if (tab === 'pending') this.pendingData = res.data || [];
-        if (tab === 'employee-wise') this.employeeWiseData = res.data || [];
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Failed to load report.';
-        this.loading = false;
+  handlers[tab]().subscribe({
+    next: (res: any) => {
+
+      console.log('Report Response', res);
+
+      switch (tab) {
+        case 'completed':
+          this.completedData = [...(res.data ?? [])];
+          break;
+
+        case 'pending':
+          this.pendingData = [...(res.data ?? [])];
+          break;
+
+        case 'employee-wise':
+          this.employeeWiseData = [...(res.data ?? [])];
+          break;
       }
-    });
-  }
+
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      this.errorMessage =
+        err.error?.message || 'Failed to load report.';
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   exportCsv(): void {
     const type = this.activeTab === 'employee-wise' ? 'completed' : this.activeTab;

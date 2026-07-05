@@ -1,173 +1,115 @@
-# Architecture - Employee Task Management System
+# Architecture / Flow Diagram
 
-## System Overview
-
-```mermaid
-flowchart TB
-    subgraph Client["Client Layer"]
-        A[Angular Frontend<br/>TypeScript + Bootstrap]
-    end
-
-    subgraph Server["Application Layer"]
-        B[Express.js API Server<br/>Node.js]
-        C[JWT Auth Middleware]
-        D[Role-Based Access Control]
-        E[Multer File Upload]
-        F[Controllers & Routes]
-    end
-
-    subgraph Data["Data Layer"]
-        G[(MySQL Database)]
-        H[File Storage<br/>uploads/]
-    end
-
-    A -->|HTTP REST API<br/>JSON + FormData| B
-    B --> C
-    C --> D
-    D --> F
-    F --> E
-    F -->|SQL Queries| G
-    E --> H
-    F -->|Store file paths| G
-```
-
-## JWT Authentication Flow
+## Basic Flow
 
 ```mermaid
-sequenceDiagram
-    participant U as User
-    participant F as Angular Frontend
-    participant A as Express API
-    participant DB as MySQL
-
-    U->>F: Enter credentials + Remember Me
-    F->>A: POST /api/auth/login
-    A->>DB: Validate user credentials
-    DB-->>A: User record
-    A->>A: bcrypt compare password
-    A->>A: Generate JWT token
-    A-->>F: Token + User data
-
-    alt Remember Me checked
-        F->>F: Store token in localStorage
-    else Remember Me unchecked
-        F->>F: Store token in sessionStorage
-    end
-
-    F->>A: API requests with Authorization Bearer token
-    A->>A: Verify JWT signature & expiry
-    A->>DB: Fetch user details
-    A-->>F: Protected resource response
-
-    U->>F: Logout
-    F->>F: Clear localStorage & sessionStorage
+flowchart TD
+    A[User] --> B[Angular Frontend]
+    B --> C[Node.js / Express Backend]
+    C --> D[MySQL Database]
+    C --> E[Uploads Folder]
 ```
 
-## Role-Based Access Control
+## Application Flow
+
+```mermaid
+flowchart TD
+    A[Login / Register] --> B[JWT Token Generated]
+    B --> C[Token Stored in Browser]
+
+    C --> D{User Role}
+
+    D -->|Admin| E[Admin Dashboard]
+    D -->|Employee| F[Employee Dashboard]
+
+    E --> G[Manage Employees]
+    E --> H[Create / Update / Delete Tasks]
+    E --> I[View Reports]
+
+    F --> J[View Assigned Tasks]
+    F --> K[Update Task Status]
+
+    H --> L[Notifications Created]
+    K --> L
+
+    G --> M[(MySQL Database)]
+    H --> M
+    I --> M
+    L --> M
+```
+
+## Role Flow
 
 ```mermaid
 flowchart LR
-    subgraph Roles
-        Admin[Admin Role]
-        Employee[Employee Role]
-    end
+    A[Admin] --> B[Dashboard]
+    A --> C[Employee Management]
+    A --> D[Task Management]
+    A --> E[Reports]
 
-    subgraph AdminAccess["Admin Access"]
-        AD[Admin Dashboard]
-        EM[Employee Management]
-        AT[All Tasks CRUD]
-        AR[All Reports]
-        AN[Notifications]
-    end
-
-    subgraph EmployeeAccess["Employee Access"]
-        ED[Employee Dashboard]
-        MT[Own Tasks Only]
-        ER[Limited Reports]
-        EN[Notifications]
-    end
-
-    Admin --> AD
-    Admin --> EM
-    Admin --> AT
-    Admin --> AR
-    Admin --> AN
-
-    Employee --> ED
-    Employee --> MT
-    Employee --> ER
-    Employee --> EN
+    F[Employee] --> G[Dashboard]
+    F --> H[My Tasks]
+    F --> I[Notifications]
 ```
 
-## Database Entity Relationships
+## Database Tables
 
 ```mermaid
 erDiagram
-    USERS ||--o| EMPLOYEES : "has profile"
-    USERS ||--o{ TASKS : creates
+    USERS ||--o| EMPLOYEES : linked_to
+    EMPLOYEES ||--o{ TASKS : assigned_tasks
     USERS ||--o{ NOTIFICATIONS : receives
-    EMPLOYEES ||--o{ TASKS : assigned
-    TASKS ||--o{ TASK_ATTACHMENTS : has
-    TASKS ||--o{ NOTIFICATIONS : triggers
+    TASKS ||--o{ TASK_ATTACHMENTS : has_files
 
     USERS {
-        int id PK
+        int id
         string full_name
-        string email UK
+        string email
         string password_hash
-        enum role
+        string role
     }
 
     EMPLOYEES {
-        int id PK
-        int user_id FK
+        int id
+        int user_id
         string name
-        string email UK
+        string email
         string department
         string designation
     }
 
     TASKS {
-        int id PK
+        int id
         string title
-        enum priority
-        enum status
+        string description
+        string priority
+        string status
         date start_date
         date due_date
-        int assigned_employee_id FK
-        int created_by FK
+        int assigned_employee_id
     }
 
     NOTIFICATIONS {
-        int id PK
-        int user_id FK
-        int task_id FK
+        int id
+        int user_id
+        int task_id
         string message
-        enum type
+        string type
         boolean is_read
     }
 
     TASK_ATTACHMENTS {
-        int id PK
-        int task_id FK
+        int id
+        int task_id
         string file_path
         string original_name
     }
 ```
 
-## API Request Flow
+## Short Explanation
 
-```mermaid
-flowchart TD
-    R[Incoming Request] --> P{Public Route?}
-    P -->|Yes| H[Auth Controller]
-    P -->|No| T{Valid JWT?}
-    T -->|No| E401[401 Unauthorized]
-    T -->|Yes| RBAC{Role Allowed?}
-    RBAC -->|No| E403[403 Forbidden]
-    RBAC -->|Yes| C[Controller Logic]
-    C --> DB[(MySQL)]
-    C --> N[Notification Service]
-    C --> FS[File System]
-    C --> RES[JSON Response]
-```
+The Angular frontend sends requests to the Express backend using REST APIs.  
+The backend checks JWT authentication and user role before allowing access.  
+Admin users can manage employees, tasks, and reports.  
+Employee users can view their own dashboard and assigned tasks only.  
+All data is stored in MySQL. Uploaded files are stored in the backend uploads folder, and their file paths are saved in the database.
