@@ -26,43 +26,55 @@ This project is a full-stack Employee Task Management System. It allows an admin
 
 ## Project Structure
 
+```text
 employee-task-management-system
 │
 ├── frontend
 ├── backend
 ├── database
 └── README.md
+```
 
-## Setup
+---
 
-### 1. Clone the project
+# Setup
 
+## 1. Clone the project
+
+```bash
 git clone <repository-url>
+```
 
-
-### 2. Database
+## 2. Database
 
 Create a database named:
 
+```text
 employee_task_management
-
+```
 
 Import the SQL file:
 
+```text
 database/employee_task_management.sql
+```
 
+---
 
-### 3. Backend
+## 3. Backend Setup
 
-Go to backend folder.
+Go to the backend folder.
 
+```bash
 cd backend
 npm install
+```
 
 Create a `.env` file.
 
 Example:
 
+```env
 PORT=3000
 DB_HOST=localhost
 DB_USER=root
@@ -72,40 +84,47 @@ DB_NAME=employee_task_management
 JWT_SECRET=your_secret_key
 JWT_EXPIRES_IN=8h
 JWT_REMEMBER_EXPIRES_IN=7d
+```
 
+Run the backend:
 
-Run backend
-
+```bash
 npm run dev
+```
 
+Backend URL:
 
-Backend runs on
-
+```text
 http://localhost:3000
+```
 
 ---
 
-### 4. Frontend
+## 4. Frontend Setup
 
+Go to the frontend folder.
+
+```bash
 cd frontend
 npm install
 ng serve
+```
 
-Application runs on
+Frontend URL:
 
+```text
 http://localhost:4200
+```
 
 ---
 
-## API
-
-Main APIs used:
+## API Endpoints
 
 - Login
 - Register
 - Dashboard
-- Employees CRUD
-- Tasks CRUD
+- Employee CRUD
+- Task CRUD
 - Notifications
 - Reports
 - CSV Export
@@ -118,5 +137,5 @@ Main APIs used:
 - Completed tasks cannot be edited.
 - Employees can only view their own tasks.
 - Admin can manage employees and tasks.
-- Maximum upload size is 5 MB.
-- Supported files: PDF, JPG and PNG.
+- Maximum upload size: **5 MB**
+- Supported file types: **PDF, JPG, PNG**
